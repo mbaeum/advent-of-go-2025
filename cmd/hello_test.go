@@ -11,7 +11,8 @@ import (
 // newTestLogger creates an in-memory logger for testing purposes.
 func newTestLogger() (*slog.Logger, *bytes.Buffer) {
 	var logBuffer bytes.Buffer
-	logger := slog.New(slog.NewTextHandler(&logBuffer, nil))
+	var opts = slog.HandlerOptions{Level: slog.LevelDebug.Level()}
+	logger := slog.New(slog.NewTextHandler(&logBuffer, &opts))
 	return logger, &logBuffer
 }
 
