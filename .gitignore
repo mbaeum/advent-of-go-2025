@@ -23,3 +23,6 @@ go.work.sum
 
 # env file
 .env
+
+# local module binary
+advent-of-go-2025
