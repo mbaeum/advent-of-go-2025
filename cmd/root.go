@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/mbaeum/advent-of-go-2025/logger"
+	"github.com/mbaeum/advent-of-go-2025/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ func (c CLI) registerCommands() {
 func NewCLI() CLI {
 	l := logger.NewLogger()
 	cmd := &cobra.Command{
-		Use: "rdb",
+		Use: "aoc",
 	}
 	cli := CLI{l: l, cmd: cmd}
 	cli.registerCommands()
