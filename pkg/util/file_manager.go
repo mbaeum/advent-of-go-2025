@@ -30,6 +30,15 @@ func NewFileManger(path string) (*FileManager, error) {
 	return &FileManager{path, l}, nil
 }
 
+func NewChallengeFileManager(id int) (*FileManager, error) {
+	path, err := GetTargetPath(fmt.Sprintf("challenges/challenge%02d", id))
+	if err != nil {
+		return nil, err
+	}
+	return NewFileManger(path)
+
+}
+
 func (f *FileManager) GetRoot() string {
 	return f.r
 }
@@ -37,7 +46,6 @@ func (f *FileManager) GetRoot() string {
 // Creates a new challenge package based on the id given
 func (fm *FileManager) NewChallenge(id int) error {
 	d := fmt.Sprintf("%s/challenge%02d", fm.r, id)
-	fm.r = d
 	err := os.MkdirAll(d, os.ModePerm)
 	if err != nil {
 		return err
@@ -89,7 +97,7 @@ func (fm *FileManager) ReadFile(name string) (string, error) {
 	fullPath := filepath.Join(fm.r, name)
 	file, err := os.ReadFile(fullPath)
 	if err != nil {
-		return "nil", err
+		return "", err
 	}
 	return string(file), nil
 }
