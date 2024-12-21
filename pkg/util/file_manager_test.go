@@ -80,6 +80,49 @@ func TestNewChallenge(t *testing.T) {
 	}
 }
 
+func TestReadFile(t *testing.T) {
+	// Create a temporary directory
+	tempDir, err := os.MkdirTemp("", "test_root")
+	if err != nil {
+		t.Fatalf("Failed to create temp directory: %v", err)
+	}
+	defer os.RemoveAll(tempDir) // Cleanup
+
+	// Initialize FileManager
+	fm, err := util.NewFileManger(tempDir)
+	if err != nil {
+		t.Fatalf("NewFileManger failed: %v", err)
+	}
+
+	// Test creating a new challenge
+	challengeID := 1
+	err = fm.NewChallenge(challengeID)
+	if err != nil {
+		t.Fatalf("NewChallenge failed: %v", err)
+	}
+
+	// Verify challenge directory
+	challengeDir := filepath.Join(tempDir, "challenge01")
+	if _, err := os.Stat(challengeDir); os.IsNotExist(err) {
+		t.Fatalf("Expected directory %s to exist, but it does not", challengeDir)
+	}
+
+	// Verify files in the challenge directory
+	expectedFiles := []string{
+		"data_test.txt",
+		"data.txt",
+		"challenge.go",
+		"challenge_test.go",
+	}
+	for _, fileName := range expectedFiles {
+
+		_, err = fm.ReadFile(fileName)
+		if err != nil {
+			t.Errorf("Expected no error reading but got %s", err)
+		}
+	}
+}
+
 func TestNewChallenge_SkipExistingFiles(t *testing.T) {
 	// Create a temporary directory
 	tempDir, err := os.MkdirTemp("", "test_root")

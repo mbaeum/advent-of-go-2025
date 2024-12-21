@@ -30,18 +30,19 @@ func NewFileManger(path string) (*FileManager, error) {
 	return &FileManager{path, l}, nil
 }
 
-func (f FileManager) GetRoot() string {
+func (f *FileManager) GetRoot() string {
 	return f.r
 }
 
 // Creates a new challenge package based on the id given
-func (f FileManager) NewChallenge(id int) error {
-	d := fmt.Sprintf("%s/challenge%02d", f.r, id)
+func (fm *FileManager) NewChallenge(id int) error {
+	d := fmt.Sprintf("%s/challenge%02d", fm.r, id)
+	fm.r = d
 	err := os.MkdirAll(d, os.ModePerm)
 	if err != nil {
 		return err
 	}
-	f.l.Debug("Created directory", "dir", d)
+	fm.l.Debug("Created directory", "dir", d)
 
 	fileNames := []string{
 		"data_test.txt",
@@ -53,7 +54,7 @@ func (f FileManager) NewChallenge(id int) error {
 	for _, fileName := range fileNames {
 		filePath := filepath.Join(d, fileName)
 		if checkFileExists(filePath) {
-			f.l.Warn("File already exists, skipping", "file", filePath)
+			fm.l.Warn("File already exists, skipping", "file", filePath)
 			continue
 		}
 		file, err := os.Create(filePath)
@@ -62,7 +63,7 @@ func (f FileManager) NewChallenge(id int) error {
 		}
 		defer file.Close()
 
-		f.l.Debug("Created File", "file", filePath)
+		fm.l.Debug("Created File", "file", filePath)
 		filePathParts := strings.Split(fileName, ".")
 		if filePathParts[1] == "go" {
 
@@ -82,6 +83,15 @@ func (f FileManager) NewChallenge(id int) error {
 		}
 	}
 	return nil
+}
+
+func (fm *FileManager) ReadFile(name string) (string, error) {
+	fullPath := filepath.Join(fm.r, name)
+	file, err := os.ReadFile(fullPath)
+	if err != nil {
+		return "nil", err
+	}
+	return string(file), nil
 }
 
 func checkFileExists(filePath string) bool {
