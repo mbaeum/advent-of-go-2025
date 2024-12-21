@@ -69,10 +69,10 @@ func (f FileManager) NewChallenge(id int) error {
 			var content string
 
 			if !strings.Contains(filePathParts[0], "_test") {
-				content += "package challenge\n\n"
+				content += "package challenges\n\n"
 				content += fmt.Sprintf("type Challenge%02d struct { }\n\n", id)
 			} else {
-				content += "package challenge_test\n"
+				content += "package challenges_test\n"
 			}
 
 			_, err := file.WriteString(content)

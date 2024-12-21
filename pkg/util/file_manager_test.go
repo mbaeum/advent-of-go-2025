@@ -73,7 +73,7 @@ func TestNewChallenge(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to read file %s: %v", challengeFile, err)
 	}
-	expectedContent := "package challenge\n\n" +
+	expectedContent := "package challenges\n\n" +
 		"type Challenge01 struct { }\n\n"
 	if string(content) != expectedContent {
 		t.Errorf("Content mismatch in %s:\nExpected:\n%s\nGot:\n%s", challengeFile, expectedContent, content)
