@@ -22,7 +22,7 @@ func (c CLI) RunContext(ctx context.Context) error {
 }
 
 func (c CLI) registerCommands() {
-	c.cmd.AddCommand(newHelloCmd(c.l))
+	c.cmd.AddCommand(newChallengeCmd(c.l))
 }
 
 func NewCLI() CLI {
