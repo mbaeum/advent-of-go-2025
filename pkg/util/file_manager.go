@@ -48,22 +48,14 @@ func (f *FileManager) GetRoot() string {
 
 // Creates a new challenge package based on the id given
 func (fm *FileManager) NewChallenge(id int) error {
-	d := fmt.Sprintf("%s/challenge%02d", fm.r, id)
-	err := os.MkdirAll(d, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	fm.l.Debug("Created directory", "dir", d)
 
 	fileNames := []string{
-		"data_test.txt",
-		"data.txt",
-		"challenge.go",
-		"challenge_test.go",
+		fmt.Sprintf("challenge%02d.go", id),
+		fmt.Sprintf("challenge%02d_test.go", id),
 	}
 
 	for _, fileName := range fileNames {
-		filePath := filepath.Join(d, fileName)
+		filePath := filepath.Join(fm.r, fileName)
 		if checkFileExists(filePath) {
 			fm.l.Warn("File already exists, skipping", "file", filePath)
 			continue
@@ -83,6 +75,8 @@ func (fm *FileManager) NewChallenge(id int) error {
 			if !strings.Contains(filePathParts[0], "_test") {
 				content += "package challenges\n\n"
 				content += fmt.Sprintf("type Challenge%02d struct { }\n\n", id)
+				content += fmt.Sprintf("func (c *Challenge%02d) GetId() int { return %d } \n\n", id, id)
+				content += fmt.Sprintf("func (c *Challenge%02d) GetTestData() string { \n\ts := `\n\t\ttest\n\t`\n\treturn s\n}\n\n", id)
 				content += fmt.Sprintf("func (c *Challenge%02d) RunPartOneTest() error { return nil } \n\n", id)
 				content += fmt.Sprintf("func (c *Challenge%02d) RunPartOne() error { return nil } \n\n", id)
 				content += fmt.Sprintf("func (c *Challenge%02d) RunPartTwoTest() error { return nil } \n\n", id)
@@ -94,11 +88,6 @@ func (fm *FileManager) NewChallenge(id int) error {
 			_, err := file.WriteString(content)
 			if err != nil {
 				return err
-			}
-		}
-		if filePathParts[1] == "txt" {
-			if !strings.Contains(filePathParts[0], "_test") && fm.cfg != nil {
-				getChallengeData(file, id, fm.cfg.SessionCookie)
 			}
 		}
 	}
@@ -119,23 +108,28 @@ func checkFileExists(filePath string) bool {
 	return !errors.Is(error, os.ErrNotExist)
 }
 
-func getChallengeData(file *os.File, id int, sc string) error {
+func GetChallengeData(id int, sc string) (string, error) {
 	url := fmt.Sprintf("https://adventofcode.com/2024/day/%d/input", id)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return err
+		return "", err
 	}
 	req.Header.Set("Cookie", fmt.Sprintf("session=%s", sc))
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer resp.Body.Close()
 
-	_, err = io.Copy(file, resp.Body)
-	if err != nil {
-		return err
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
-	return nil
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	return string(body), nil
 }

@@ -48,28 +48,20 @@ func TestNewChallenge(t *testing.T) {
 		t.Fatalf("NewChallenge failed: %v", err)
 	}
 
-	// Verify challenge directory
-	challengeDir := filepath.Join(tempDir, "challenge01")
-	if _, err := os.Stat(challengeDir); os.IsNotExist(err) {
-		t.Fatalf("Expected directory %s to exist, but it does not", challengeDir)
-	}
-
 	// Verify files in the challenge directory
 	expectedFiles := []string{
-		"data_test.txt",
-		"data.txt",
-		"challenge.go",
-		"challenge_test.go",
+		"challenge01.go",
+		"challenge01_test.go",
 	}
 	for _, fileName := range expectedFiles {
-		filePath := filepath.Join(challengeDir, fileName)
+		filePath := filepath.Join(tempDir, fileName)
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
 			t.Errorf("Expected file %s to exist, but it does not", filePath)
 		}
 	}
 
 	// Verify challenge.go content
-	challengeFile := filepath.Join(challengeDir, "challenge.go")
+	challengeFile := filepath.Join(tempDir, "challenge01.go")
 	content, err := os.ReadFile(challengeFile)
 	if err != nil {
 		t.Fatalf("Failed to read file %s: %v", challengeFile, err)
@@ -103,7 +95,7 @@ func TestNewChallenge_SkipExistingFiles(t *testing.T) {
 	}
 
 	// Modify an existing file
-	existingFile := filepath.Join(tempDir, "challenge02", "data.txt")
+	existingFile := filepath.Join(tempDir, "challenge02.go")
 	err = os.WriteFile(existingFile, []byte("Modified content"), os.ModePerm)
 	if err != nil {
 		t.Fatalf("Failed to modify file %s: %v", existingFile, err)
