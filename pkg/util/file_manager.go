@@ -71,18 +71,15 @@ func (fm *FileManager) NewChallenge(id int) error {
 		if filePathParts[1] == "go" {
 
 			var content string
+			i := templaterInput{Id: id}
 
 			if !strings.Contains(filePathParts[0], "_test") {
-				content += "package challenges\n\n"
-				content += fmt.Sprintf("type Challenge%02d struct { }\n\n", id)
-				content += fmt.Sprintf("func (c *Challenge%02d) GetId() int { return %d } \n\n", id, id)
-				content += fmt.Sprintf("func (c *Challenge%02d) GetTestData() string { \n\ts := `\n\t\ttest\n\t`\n\treturn s\n}\n\n", id)
-				content += fmt.Sprintf("func (c *Challenge%02d) RunPartOneTest() error { return nil } \n\n", id)
-				content += fmt.Sprintf("func (c *Challenge%02d) RunPartOne() error { return nil } \n\n", id)
-				content += fmt.Sprintf("func (c *Challenge%02d) RunPartTwoTest() error { return nil } \n\n", id)
-				content += fmt.Sprintf("func (c *Challenge%02d) RunPartTwo() error { return nil } \n\n", id)
+				content, err = createChallengeFileString(i, challengeFileTemplate)
 			} else {
-				content += "package challenges_test\n"
+				content, err = createChallengeFileString(i, challengeFileTestTemplate)
+			}
+			if err != nil {
+				return err
 			}
 
 			_, err := file.WriteString(content)

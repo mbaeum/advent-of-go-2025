@@ -6,13 +6,18 @@ import (
 	"github.com/mbaeum/advent-of-go-2025/pkg/util"
 )
 
+type Mode int
+
+const (
+	TestMode Mode = iota
+	MainMode
+)
+
 type Challenge interface {
 	GetId() int
-	GetTestData() string
-	RunPartOneTest() error
-	RunPartOne() error
-	RunPartTwoTest() error
-	RunPartTwo() error
+	GetData(m Mode) (string, error)
+	RunPartOne(m Mode) (string, error)
+	RunPartTwo(m Mode) (string, error)
 }
 
 func GetData(c Challenge, sc string) (string, error) {
