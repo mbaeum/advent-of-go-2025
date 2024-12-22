@@ -3,7 +3,9 @@ package util
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,23 +21,24 @@ func GetTargetPath(name string) (string, error) {
 }
 
 type FileManager struct {
-	r string
-	l *slog.Logger
+	r   string
+	l   *slog.Logger
+	cfg *Config
 }
 
 // Creates a new FileManager which can manipulate files
 // in the `path` folder.
-func NewFileManger(path string) (*FileManager, error) {
+func NewFileManger(path string, cfg *Config) (*FileManager, error) {
 	l := NewLogger()
-	return &FileManager{path, l}, nil
+	return &FileManager{path, l, cfg}, nil
 }
 
-func NewChallengeFileManager(id int) (*FileManager, error) {
+func NewChallengeFileManager(id int, cfg *Config) (*FileManager, error) {
 	path, err := GetTargetPath(fmt.Sprintf("challenges/challenge%02d", id))
 	if err != nil {
 		return nil, err
 	}
-	return NewFileManger(path)
+	return NewFileManger(path, cfg)
 
 }
 
@@ -89,6 +92,11 @@ func (fm *FileManager) NewChallenge(id int) error {
 				return err
 			}
 		}
+		if filePathParts[1] == "txt" {
+			if !strings.Contains(filePathParts[0], "_test") && fm.cfg != nil {
+				getChallengeData(file, id, fm.cfg.SessionCookie)
+			}
+		}
 	}
 	return nil
 }
@@ -105,4 +113,25 @@ func (fm *FileManager) ReadFile(name string) (string, error) {
 func checkFileExists(filePath string) bool {
 	_, error := os.Stat(filePath)
 	return !errors.Is(error, os.ErrNotExist)
+}
+
+func getChallengeData(file *os.File, id int, sc string) error {
+	url := fmt.Sprintf("https://adventofcode.com/2024/day/%d/input", id)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Cookie", fmt.Sprintf("session=%s", sc))
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return err
+	}
+	return nil
 }

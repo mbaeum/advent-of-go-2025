@@ -13,6 +13,13 @@ import (
 
 func newChallengeCmd(l *slog.Logger) *cobra.Command {
 	l.Debug("Running cmd", "cmd", "challenge")
+
+	cfg, err := util.NewConfig("config.json")
+	if err != nil {
+		return nil
+	}
+	l.Debug("Got config", "config", cfg)
+
 	c := &cobra.Command{
 		Use:   "challenge",
 		Short: "Manage challenges",
@@ -20,12 +27,12 @@ func newChallengeCmd(l *slog.Logger) *cobra.Command {
 			return nil
 		},
 	}
-	c.AddCommand(newNewChallengeCmd(l))
-	c.AddCommand(newRunChallengeCmd(l))
+	c.AddCommand(newNewChallengeCmd(l, cfg))
+	c.AddCommand(newRunChallengeCmd(l, cfg))
 	return c
 }
 
-func newNewChallengeCmd(l *slog.Logger) *cobra.Command {
+func newNewChallengeCmd(l *slog.Logger, cfg *util.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "new",
 		Short: "Create a new challenge",
@@ -36,7 +43,7 @@ func newNewChallengeCmd(l *slog.Logger) *cobra.Command {
 				l.Error("Error getting target path", "error", err)
 				return err
 			}
-			fm, err := util.NewFileManger(path)
+			fm, err := util.NewFileManger(path, cfg)
 			if err != nil {
 				l.Error("Error creating file manager", "error", err)
 				return err
@@ -62,7 +69,7 @@ func newNewChallengeCmd(l *slog.Logger) *cobra.Command {
 	}
 }
 
-func newRunChallengeCmd(l *slog.Logger) *cobra.Command {
+func newRunChallengeCmd(l *slog.Logger, cfg *util.Config) *cobra.Command {
 	return &cobra.Command{
 		Use:   "run",
 		Short: "Run an existing challenge",
@@ -73,7 +80,7 @@ func newRunChallengeCmd(l *slog.Logger) *cobra.Command {
 				l.Error("Error parsing argument", "error", err)
 				return err
 			}
-			fm, err := util.NewChallengeFileManager(id)
+			fm, err := util.NewChallengeFileManager(id, cfg)
 			if err != nil {
 				l.Error("Error creating file manager", "error", err)
 				return err

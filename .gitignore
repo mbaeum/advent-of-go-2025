@@ -26,3 +26,4 @@ go.work.sum
 
 # local module binary
 advent-of-go-2025
+config.json

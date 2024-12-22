@@ -17,7 +17,7 @@ func TestNewFileManager(t *testing.T) {
 	defer os.RemoveAll(tempDir) // Cleanup
 
 	// Test successful FileManager creation
-	fm, err := util.NewFileManger(tempDir)
+	fm, err := util.NewFileManger(tempDir, nil)
 	if err != nil {
 		t.Fatalf("NewFileManger failed: %v", err)
 	}
@@ -35,7 +35,7 @@ func TestNewChallenge(t *testing.T) {
 	defer os.RemoveAll(tempDir) // Cleanup
 
 	// Initialize FileManager
-	fm, err := util.NewFileManger(tempDir)
+	fm, err := util.NewFileManger(tempDir, nil)
 	if err != nil {
 		t.Fatalf("NewFileManger failed: %v", err)
 	}
@@ -89,7 +89,7 @@ func TestNewChallenge_SkipExistingFiles(t *testing.T) {
 	defer os.RemoveAll(tempDir) // Cleanup
 
 	// Initialize FileManager
-	fm, err := util.NewFileManger(tempDir)
+	fm, err := util.NewFileManger(tempDir, nil)
 	if err != nil {
 		t.Fatalf("NewFileManger failed: %v", err)
 	}
