@@ -3,8 +3,10 @@ package challenges
 import "fmt"
 
 type Challenge interface {
-	RunTest() error
-	Run() error
+	RunPartOneTest() error
+	RunPartOne() error
+	RunPartTwoTest() error
+	RunPartTwo() error
 }
 
 type ChallengeFactory struct {
