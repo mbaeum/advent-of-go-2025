@@ -83,6 +83,10 @@ func (fm *FileManager) NewChallenge(id int) error {
 			if !strings.Contains(filePathParts[0], "_test") {
 				content += "package challenges\n\n"
 				content += fmt.Sprintf("type Challenge%02d struct { }\n\n", id)
+				content += fmt.Sprintf("func (c *Challenge%02d) RunPartOneTest() error { return nil } \n\n", id)
+				content += fmt.Sprintf("func (c *Challenge%02d) RunPartOne() error { return nil } \n\n", id)
+				content += fmt.Sprintf("func (c *Challenge%02d) RunPartTwoTest() error { return nil } \n\n", id)
+				content += fmt.Sprintf("func (c *Challenge%02d) RunPartTwo() error { return nil } \n\n", id)
 			} else {
 				content += "package challenges_test\n"
 			}
