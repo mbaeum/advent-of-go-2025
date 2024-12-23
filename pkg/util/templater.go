@@ -21,6 +21,8 @@ func NewChallenge{{printf "%02d" .Id}}(cfg *util.Config) Challenge{{printf "%02d
 
 func (c *Challenge{{printf "%02d" .Id}}) GetId() int { return {{.Id}} }
 
+func (c *Challenge{{printf "%02d" .Id}}) SetSessionCookie(sc string) { c.sc = sc }
+
 func (c *Challenge{{printf "%02d" .Id}}) GetData(m Mode) (string, error) {
 	switch m {
 	case TestMode:

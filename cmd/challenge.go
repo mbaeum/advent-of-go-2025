@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/mbaeum/advent-of-go-2025/challenges"
 	"github.com/mbaeum/advent-of-go-2025/pkg/util"
 )
 
@@ -80,18 +81,28 @@ func newRunChallengeCmd(l *slog.Logger, cfg *util.Config) *cobra.Command {
 				l.Error("Error parsing argument", "error", err)
 				return err
 			}
-			fm, err := util.NewChallengeFileManager(id, cfg)
-			if err != nil {
-				l.Error("Error creating file manager", "error", err)
-				return err
-			}
-			contents, err := fm.ReadFile("data_test.txt")
+			factory := challenges.NewChallengeFactory()
+			fmt.Printf("Factory: %v", factory)
+			challenge, err := factory.GetChallenge(id)
 			if err != nil {
 				return err
 			}
-			fmt.Printf("contents: %s", contents)
+			challenge.SetSessionCookie(cfg.SessionCookie)
+			res, err := challenge.RunPartOne(challenges.MainMode)
+			if err != nil {
+				return err
+			}
 
+			fmt.Printf("Challenge part one returned '%s'", res)
+
+			res, err = challenge.RunPartTwo(challenges.MainMode)
+			if err != nil {
+				return err
+			}
+
+			fmt.Printf("Challenge part two returned '%s'", res)
 			return nil
+
 		},
 	}
 }
