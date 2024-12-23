@@ -36,7 +36,7 @@ type ChallengeFactory struct {
 
 func (cf *ChallengeFactory) RegisterChallenge(c Challenge) error {
 	if c.GetId() > len(cf.m) {
-		return fmt.Errorf("Challenge factory can only hold %d challenges, tried adding %d", len(cf.m), c.GetId())
+		return fmt.Errorf("Challenge factory can only hold %d challenges, tried adding %d", len(cf.m)+1, c.GetId())
 	}
 	cf.m[c.GetId()-1] = c
 	fmt.Printf("registered challenge %d: %v", c.GetId(), cf.m)

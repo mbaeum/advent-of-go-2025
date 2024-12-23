@@ -87,20 +87,21 @@ func newRunChallengeCmd(l *slog.Logger, cfg *util.Config) *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			challenge.SetSessionCookie(cfg.SessionCookie)
 			res, err := challenge.RunPartOne(challenges.MainMode)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("Challenge part one returned '%s'", res)
+			fmt.Printf("!!!Challenge part one returned '%s'", res)
 
 			res, err = challenge.RunPartTwo(challenges.MainMode)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("Challenge part two returned '%s'", res)
+			fmt.Printf("!!!Challenge part two returned '%s'", res)
 			return nil
 
 		},
