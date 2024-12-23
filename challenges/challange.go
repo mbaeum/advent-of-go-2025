@@ -34,13 +34,9 @@ type ChallengeFactory struct {
 	m map[int]Challenge
 }
 
-func (cf *ChallengeFactory) RegisterChallenge(c Challenge) error {
-	if c.GetId() > len(cf.m) {
-		return fmt.Errorf("Challenge factory can only hold %d challenges, tried adding %d", len(cf.m)+1, c.GetId())
-	}
+func (cf *ChallengeFactory) RegisterChallenge(c Challenge) {
 	cf.m[c.GetId()-1] = c
 	fmt.Printf("registered challenge %d: %v", c.GetId(), cf.m)
-	return nil
 }
 
 func (cf *ChallengeFactory) GetChallenge(id int) (Challenge, error) {
@@ -51,15 +47,17 @@ func (cf *ChallengeFactory) GetChallenge(id int) (Challenge, error) {
 	}
 }
 
-func NewChallengeFactory() ChallengeFactory {
-	m := make(map[int]Challenge, 24)
+func NewChallengeFactory() *ChallengeFactory {
+	m := make(map[int]Challenge)
 	cf := ChallengeFactory{m}
+
 	registerChallenges(&cf)
-	return cf
+	return &cf
 }
 
 // This function is to register new challenges
 // by adding a line
 // f.RegisterChallenge(&ChallengeX{})
 func registerChallenges(f *ChallengeFactory) {
+	f.RegisterChallenge(&Challenge01{})
 }

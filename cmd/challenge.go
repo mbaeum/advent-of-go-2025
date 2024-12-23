@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"log/slog"
 	"strconv"
 
@@ -81,8 +80,9 @@ func newRunChallengeCmd(l *slog.Logger, cfg *util.Config) *cobra.Command {
 				l.Error("Error parsing argument", "error", err)
 				return err
 			}
+
 			factory := challenges.NewChallengeFactory()
-			fmt.Printf("Factory: %v", factory)
+
 			challenge, err := factory.GetChallenge(id)
 			if err != nil {
 				return err
@@ -94,14 +94,15 @@ func newRunChallengeCmd(l *slog.Logger, cfg *util.Config) *cobra.Command {
 				return err
 			}
 
-			fmt.Printf("!!!Challenge part one returned '%s'", res)
+			l.Info("Challenge returned", "challenge", 1, "result", res)
 
 			res, err = challenge.RunPartTwo(challenges.MainMode)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("!!!Challenge part two returned '%s'", res)
+			l.Info("Challenge returned", "challenge", 2, "result", res)
+
 			return nil
 
 		},
