@@ -91,15 +91,6 @@ func (fm *FileManager) NewChallenge(id int) error {
 	return nil
 }
 
-func (fm *FileManager) ReadFile(name string) (string, error) {
-	fullPath := filepath.Join(fm.r, name)
-	file, err := os.ReadFile(fullPath)
-	if err != nil {
-		return "", err
-	}
-	return string(file), nil
-}
-
 func checkFileExists(filePath string) bool {
 	_, error := os.Stat(filePath)
 	return !errors.Is(error, os.ErrNotExist)
